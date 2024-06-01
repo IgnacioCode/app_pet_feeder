@@ -37,6 +37,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
+        android:onClick="changeActivitySensor"
         android:text="Tocame!"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputEditText" />
