@@ -1,12 +1,15 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,10 +18,14 @@ public class SensorActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private SensorEventListener sensorEventListener;
 
+    TextView label_shake;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_sensor); // Inflar el diseño de la interfaz de usuario
+        setContentView(R.layout.screen_sensor); // Carga la pantalla
+
+        label_shake = findViewById(R.id.txt_shake);
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorEventListener = new SensorEventListener() {
             private static final float SHAKE_THRESHOLD = 500f; // Puedes ajustar este valor según tu necesidad
@@ -41,6 +48,7 @@ public class SensorActivity extends AppCompatActivity {
 
                         if (speed > SHAKE_THRESHOLD) {
                             System.out.println("SE DETECTO SHAKE!");
+                            label_shake.setVisibility(View.VISIBLE);
                         }
 
                         lastX = x;
@@ -67,5 +75,15 @@ public class SensorActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(sensorEventListener);
+    }
+
+    public void changeActivityMain(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void resetText(View view){
+        label_shake.setVisibility(View.INVISIBLE);
     }
 }
