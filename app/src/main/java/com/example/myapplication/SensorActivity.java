@@ -1,12 +1,14 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +20,7 @@ public class SensorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_sensor); // Inflar el diseño de la interfaz de usuario
+        setContentView(R.layout.test_activity); // Inflar el diseño de la interfaz de usuario
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorEventListener = new SensorEventListener() {
             private static final float SHAKE_THRESHOLD = 500f; // Puedes ajustar este valor según tu necesidad
@@ -67,5 +69,10 @@ public class SensorActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(sensorEventListener);
+    }
+
+    public void changeActivityMain(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
