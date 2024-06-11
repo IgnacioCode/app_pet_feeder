@@ -1,10 +1,7 @@
 package com.example.myapplication;
 
-import android.content.Intent;
-import android.hardware.Sensor;
+
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -20,11 +17,12 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    Button botonCambioActivity;
+    private MQTTManager mqttManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -39,11 +37,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-    }
+        mqttManager = new MQTTManager(this);
+        mqttManager.connect();
 
-    public void changeActivitySensor(View view) {
-        Intent intent = new Intent(this, SensorActivity.class);
-        startActivity(intent);
+        getSupportActionBar().hide();
     }
 
 }
