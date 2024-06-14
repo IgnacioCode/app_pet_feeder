@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -13,11 +14,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
     private MQTTManager mqttManager;
+    public PetRecorder petRecorder;
+    public List<Pet> petList;
+
+    public int next_meal_time;
+    public float next_food_amount;
+    public boolean refill_need = false;
+    public boolean clear_need = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         mqttManager.connect();
 
         getSupportActionBar().hide();
+
+        petList = PetRecorder.loadPetsFromFile(this);
+        /*Pet newCat = new Pet("Juan");
+        petList.add(newCat);
+        Log.d("TEST",petList.toString());
+        PetRecorder.savePetsToFile(this,petList);*/
     }
 
 }
