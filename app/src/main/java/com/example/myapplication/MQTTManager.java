@@ -161,4 +161,9 @@ public class MQTTManager {
             throw new RuntimeException(e);
         }
     }
+
+    public FeederState getNewFeederState(Context context){
+        return new FeederState();
+    }
+
 }

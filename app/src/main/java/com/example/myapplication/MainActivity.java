@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -18,19 +20,21 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    private static final String FILE_NAME = "pets.dat";
 
+    private ActivityMainBinding binding;
     private MQTTManager mqttManager;
     public PetRecorder petRecorder;
     public List<Pet> petList;
 
-    public int next_meal_time;
-    public float next_food_amount;
-    public boolean refill_need = false;
-    public boolean clear_need = false;
+    public FeederState feederState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mqttManager = new MQTTManager(this);
+        mqttManager.connect();
+        feederState = mqttManager.getNewFeederState(this);
+
         super.onCreate(savedInstanceState);
 
 
@@ -47,16 +51,21 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        mqttManager = new MQTTManager(this);
-        mqttManager.connect();
-
         getSupportActionBar().hide();
 
-        petList = PetRecorder.loadPetsFromFile(this);
-        /*Pet newCat = new Pet("Juan");
-        petList.add(newCat);
-        Log.d("TEST",petList.toString());
-        PetRecorder.savePetsToFile(this,petList);*/
+        petRecorder = new PetRecorder(FILE_NAME);
+        petRecorder.loadPetsFromFile(this);
+
+        Pet newCat = new Pet("Pepe","CA");
+        newCat.record_meal(60.1);
+        newCat.record_meal(12.36);
+        newCat.record_meal(2.36);
+        newCat.record_meal(8.49);
+        newCat.record_meal(24.94);
+        petRecorder.addPetToList(newCat);
+
+        Log.d("TEST",petRecorder.getPetList().toString());
+        petRecorder.savePetsToFile(this);
     }
 
 }

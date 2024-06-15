@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Pet;
+import com.example.myapplication.PetRecorder;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentDashboardBinding;
 
@@ -35,9 +36,9 @@ public class DashboardFragment extends Fragment {
         MainActivity mainActivity = (MainActivity) getActivity();
         LinearLayout containerLayout = root.findViewById(R.id.contenedor_linear);
 
-        List<Pet> petList = mainActivity.petList;
+        PetRecorder petRecorder = mainActivity.petRecorder;
 
-        for (Pet pet : petList) {
+        for (Pet pet : petRecorder.getPetList()) {
             addPetToContainer(containerLayout, pet);
         }
         return root;
@@ -80,7 +81,7 @@ public class DashboardFragment extends Fragment {
 
         // Crear TextView para eat_average
         TextView eatAverageTextView = new TextView(getContext());
-        eatAverageTextView.setText("Promedio ingerido: " + pet.getEat_average());
+        eatAverageTextView.setText("Promedio ingerido: " + String.format("%.2f",pet.getEat_average()));
         eatAverageTextView.setTextSize(16);
         eatAverageTextView.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, 16);
         petContainer.addView(eatAverageTextView);

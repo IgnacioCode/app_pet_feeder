@@ -4,19 +4,25 @@ import android.content.Context;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PetRecorder {
 
-    private static final String FILE_NAME = "pets.dat";
+    private List<Pet> petList;
+    private String filename;
+    public PetRecorder(String filename){
+        petList = new ArrayList<>();
+        this.filename = filename;
+    }
 
-    public static void savePetsToFile(Context context, List<Pet> pets) {
+    public void savePetsToFile(Context context) {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-            fos = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+            fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
             oos = new ObjectOutputStream(fos);
-            oos.writeObject(pets);
+            oos.writeObject(petList);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -38,12 +44,12 @@ public class PetRecorder {
     }
 
     // Método para cargar una lista de Pet desde un archivo
-    public static List<Pet> loadPetsFromFile(Context context) {
+    public void loadPetsFromFile(Context context) {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
         List<Pet> pets = new ArrayList<>();
         try {
-            fis = context.openFileInput(FILE_NAME);
+            fis = context.openFileInput(filename);
             ois = new ObjectInputStream(fis);
             pets = (List<Pet>) ois.readObject();
         } catch (FileNotFoundException e) {
@@ -66,6 +72,32 @@ public class PetRecorder {
                 }
             }
         }
-        return pets;
+        petList = pets;
+    }
+
+    public void addPetToList(Pet newPet){
+        if (!petList.contains(newPet)) {
+            petList.add(newPet);
+        }
+    }
+
+    public void clearPetList(){
+        petList.clear();
+    }
+
+    public List<Pet> getPetList() {
+        return petList;
+    }
+
+    public void setPetList(List<Pet> petList) {
+        this.petList = petList;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

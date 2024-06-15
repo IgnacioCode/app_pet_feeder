@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAF9F6"
+    android:background="@color/smooth_white"
     android:padding="16dp"
     tools:context=".MainActivity">
 
@@ -85,12 +85,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:height="41dp"
             android:background="@drawable/tag_informe_desactivado"
+            android:gravity="center"
             android:paddingStart="15dp"
             android:paddingTop="10dp"
             android:paddingEnd="15dp"
             android:paddingBottom="10dp"
             android:text="Recarga Necesaria"
+            android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
     </LinearLayout>
@@ -109,12 +112,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/tag_informe"
+            android:height="41dp"
+            android:background="@drawable/tag_informe_desactivado"
+            android:gravity="center"
             android:paddingStart="15dp"
             android:paddingTop="10dp"
             android:paddingEnd="15dp"
             android:paddingBottom="10dp"
             android:text="Vaciar Comida"
+            android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
     </LinearLayout>
@@ -125,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/input_time"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#6C9536"
+        android:backgroundTint="@color/purple_500"
         android:hint="Ingresar cantidad"
         android:textColorHighlight="#FF6C9536"
         android:textColorLink="#FF6C9536" />
@@ -136,7 +142,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/info_recarga"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#6C9536"
+        android:backgroundTint="@color/purple_500"
         android:hint="Ingresar horario"
         android:inputType="datetime|time"
         android:textColorHighlight="#FF6C9536"
@@ -148,7 +154,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/input_quantity"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#6C9536"
+        android:backgroundTint="@color/purple_500"
         android:text="Modificar alimentacion"
         android:textColor="#000"
         app:cornerRadius="10dp" />

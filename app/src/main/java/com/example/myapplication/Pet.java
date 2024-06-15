@@ -3,26 +3,30 @@ package com.example.myapplication;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Pet implements Serializable {
+public class Pet implements Serializable, Comparable<Pet> {
     private static final long serialVersionUID = 1L; // Versión del serializable
 
     private String name;
     private int feed_times;
-    private float food_amount;
-    private float eat_average;
+    private double food_amount;
+    private double eat_average;
+    private String rfid_key;
 
-    public Pet(String name) {
+    public Pet(String name,String key) {
         this.name = name;
         this.feed_times = 0;
         this.food_amount = 0;
         this.eat_average = 0;
+        this.rfid_key = key;
     }
 
-    public void record_meal(float ate_amount) {
+    public void record_meal(double ate_amount) {
         feed_times++;
-        food_amount = ate_amount;
+        food_amount += ate_amount;
         eat_average = food_amount / feed_times;
     }
+
+
 
     @Override
     public String toString() {
@@ -38,14 +42,22 @@ public class Pet implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Pet pet = (Pet) o;
         return feed_times == pet.feed_times &&
-                Float.compare(pet.food_amount, food_amount) == 0 &&
-                Float.compare(pet.eat_average, eat_average) == 0 &&
+                Double.compare(pet.food_amount, food_amount) == 0 &&
+                Double.compare(pet.eat_average, eat_average) == 0 &&
                 Objects.equals(name, pet.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, feed_times, food_amount, eat_average);
+    }
+
+    public String getRfid_key() {
+        return rfid_key;
+    }
+
+    public void setRfid_key(String rfid_key) {
+        this.rfid_key = rfid_key;
     }
 
     public String getName() {
@@ -64,7 +76,7 @@ public class Pet implements Serializable {
         this.feed_times = feed_times;
     }
 
-    public float getFood_amount() {
+    public double getFood_amount() {
         return food_amount;
     }
 
@@ -72,11 +84,20 @@ public class Pet implements Serializable {
         this.food_amount = food_amount;
     }
 
-    public float getEat_average() {
+    public double getEat_average() {
         return eat_average;
     }
 
     public void setEat_average(float eat_average) {
         this.eat_average = eat_average;
+    }
+
+    @Override
+    public int compareTo(Pet o) {
+        if(this.rfid_key.compareTo(o.rfid_key) == 0){
+            return 0;
+        }
+
+        return 1;
     }
 }
