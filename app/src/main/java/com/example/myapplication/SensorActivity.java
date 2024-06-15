@@ -17,7 +17,7 @@ public class SensorActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private SensorEventListener sensorEventListener;
 
-    TextView label_shake;
+    //TextView label_shake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class SensorActivity extends AppCompatActivity {
 
                         if (speed > SHAKE_THRESHOLD) {
                             System.out.println("SE DETECTO SHAKE!");
-                            label_shake.setVisibility(View.VISIBLE);
+                            //label_shake.setVisibility(View.VISIBLE);
                         }
 
                         lastX = x;
