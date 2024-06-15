@@ -11,7 +11,7 @@ public class FeederState {
         nextMealTime = -1;
         foodAmount = 0;
         refillNeed = false;
-        clearNeed = true;
+        clearNeed = false;
     }
     public FeederState(int nextMealTime, double foodAmount, boolean refillNeed, boolean clearNeed) {
         this.nextMealTime = nextMealTime;

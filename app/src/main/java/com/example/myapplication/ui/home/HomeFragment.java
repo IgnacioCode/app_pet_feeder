@@ -22,6 +22,8 @@ import android.widget.Button;
 
 public class HomeFragment extends Fragment {
 
+    private static final String NO_DATA_TEXT = "-";
+    private static final int NO_DATA_TIME = -1;
     private FragmentHomeBinding binding;
 
     private TextView time_label;
@@ -65,7 +67,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void setHomeData(FeederState state){
-        time_label.setText(state.getNextMealTime()+" ");
+        if(state.getNextMealTime() == NO_DATA_TIME){
+            time_label.setText(NO_DATA_TEXT);
+        }
+        else{
+            time_label.setText(state.getNextMealTime()+"");
+        }
         amount_label.setText(String.format("%.2f",state.getFoodAmount()));
         if(state.isRefillNeed()){
             refillLabel.setBackgroundResource(R.drawable.tag_informe);
