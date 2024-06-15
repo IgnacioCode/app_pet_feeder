@@ -1,10 +1,10 @@
 package com.example.myapplication;
 
-import android.content.Intent;
-import android.hardware.Sensor;
+
+import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -16,15 +16,27 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    private static final String FILE_NAME = "pets.dat";
 
-    Button botonCambioActivity;
+    private ActivityMainBinding binding;
+    private MQTTManager mqttManager;
+    public PetRecorder petRecorder;
+    public List<Pet> petList;
+
+    public FeederState feederState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mqttManager = new MQTTManager(this);
+        mqttManager.connect();
+        feederState = mqttManager.getNewFeederState(this);
+
         super.onCreate(savedInstanceState);
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -39,11 +51,21 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-    }
+        getSupportActionBar().hide();
 
-    public void changeActivitySensor(View view) {
-        Intent intent = new Intent(this, SensorActivity.class);
-        startActivity(intent);
+        petRecorder = new PetRecorder(FILE_NAME);
+        petRecorder.loadPetsFromFile(this);
+
+        Pet newCat = new Pet("Pepe","CA");
+        newCat.record_meal(60.1);
+        newCat.record_meal(12.36);
+        newCat.record_meal(2.36);
+        newCat.record_meal(8.49);
+        newCat.record_meal(24.94);
+        petRecorder.addPetToList(newCat);
+
+        Log.d("TEST",petRecorder.getPetList().toString());
+        petRecorder.savePetsToFile(this);
     }
 
 }

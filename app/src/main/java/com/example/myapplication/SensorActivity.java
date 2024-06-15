@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,9 +22,7 @@ public class SensorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.screen_sensor); // Carga la pantalla
-
-        label_shake = findViewById(R.id.txt_shake);
+        setContentView(R.layout.test_activity); // Inflar el diseño de la interfaz de usuario
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorEventListener = new SensorEventListener() {
             private static final float SHAKE_THRESHOLD = 500f; // Puedes ajustar este valor según tu necesidad
@@ -80,10 +77,5 @@ public class SensorActivity extends AppCompatActivity {
     public void changeActivityMain(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish();
-    }
-
-    public void resetText(View view){
-        label_shake.setVisibility(View.INVISIBLE);
     }
 }

@@ -1,20 +1,38 @@
 package com.example.myapplication.ui.home;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.FeederState;
+import com.example.myapplication.MQTTManager;
+import com.example.myapplication.MainActivity;
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import android.widget.Button;
 
 public class HomeFragment extends Fragment {
 
+    private static final String NO_DATA_TEXT = "-";
+    private static final int NO_DATA_TIME = -1;
     private FragmentHomeBinding binding;
+
+    private TextView time_label;
+    private TextView amount_label;
+    private TextView refillLabel;
+    private TextView clearNeedLabel;
+    private Button modify_schedule_btn;
+    private EditText input_time;
+    private EditText input_amount;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -24,8 +42,21 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        time_label = root.findViewById(R.id.next_feeding_time);
+        amount_label = root.findViewById(R.id.food_quantity);
+        refillLabel = root.findViewById(R.id.txt_aviso_recarga);
+        clearNeedLabel = root.findViewById(R.id.txt_aviso_cambio);
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity != null && mainActivity.feederState != null) {
+                    setHomeData(mainActivity.feederState);
+                }
+            }
+        });
+
         return root;
     }
 
@@ -33,5 +64,21 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public void setHomeData(FeederState state){
+        if(state.getNextMealTime() == NO_DATA_TIME){
+            time_label.setText(NO_DATA_TEXT);
+        }
+        else{
+            time_label.setText(state.getNextMealTime()+"");
+        }
+        amount_label.setText(String.format("%.2f",state.getFoodAmount()));
+        if(state.isRefillNeed()){
+            refillLabel.setBackgroundResource(R.drawable.tag_informe);
+        }
+        if(state.isClearNeed()){
+            clearNeedLabel.setBackgroundResource(R.drawable.tag_informe);
+        }
     }
 }
