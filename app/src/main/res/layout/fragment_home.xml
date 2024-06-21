@@ -96,6 +96,12 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnAddTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agregar Horario" />
     </LinearLayout>
 
     <LinearLayout
@@ -130,11 +136,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/input_time"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="26dp"
         android:backgroundTint="@color/purple_500"
         android:hint="Ingresar cantidad"
-        android:textColorHighlight="#FF6C9536"
-        android:textColorLink="#FF6C9536" />
+        android:inputType="number"
+        android:textColor="?attr/editTextColor"/>
 
     <EditText
         android:id="@+id/input_time"
@@ -144,19 +150,24 @@
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/purple_500"
         android:hint="Ingresar horario"
-        android:inputType="datetime|time"
-        android:textColorHighlight="#FF6C9536"
-        android:textColorLink="#FF6C9536" />
+        android:inputType="none"
+        android:textColor="?attr/editTextColor"/>
 
     <Button
         android:id="@+id/update_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/input_quantity"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="22dp"
         android:backgroundTint="@color/purple_500"
-        android:text="Modificar alimentacion"
+        android:text="Agregar alimentacion"
         android:textColor="#000"
         app:cornerRadius="10dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </RelativeLayout>

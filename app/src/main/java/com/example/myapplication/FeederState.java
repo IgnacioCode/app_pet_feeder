@@ -2,27 +2,27 @@ package com.example.myapplication;
 
 public class FeederState {
 
-    private int nextMealTime;
+    private String nextMealTime;
     private double foodAmount;
     private boolean refillNeed;
     private boolean clearNeed;
 
     public FeederState(){
-        nextMealTime = -1;
+        nextMealTime = "";
         foodAmount = 0;
         refillNeed = false;
         clearNeed = false;
     }
-    public FeederState(int nextMealTime, double foodAmount, boolean refillNeed, boolean clearNeed) {
+    public FeederState(String nextMealTime, double foodAmount, boolean refillNeed, boolean clearNeed) {
         this.nextMealTime = nextMealTime;
         this.foodAmount = foodAmount;
         this.refillNeed = refillNeed;
         this.clearNeed = clearNeed;
     }
-    public int getNextMealTime() {
+    public String getNextMealTime() {
         return nextMealTime;
     }
-    public void setNextMealTime(int nextMealTime) {
+    public void setNextMealTime(String nextMealTime) {
         this.nextMealTime = nextMealTime;
     }
     public double getFoodAmount() {

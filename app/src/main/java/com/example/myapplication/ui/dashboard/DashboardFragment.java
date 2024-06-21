@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.MainActivity;
@@ -17,9 +18,6 @@ import com.example.myapplication.Pet;
 import com.example.myapplication.PetRecorder;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentDashboardBinding;
-
-import java.util.List;
-import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
 

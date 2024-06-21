@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String FILE_NAME = "pets.dat";
 
     private ActivityMainBinding binding;
-    private MQTTManager mqttManager;
+    public MQTTManager mqttManager;
     public PetRecorder petRecorder;
     public List<Pet> petList;
 
@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("TEST",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
+    }
+    public MQTTManager getMQTTManager() {
+        return mqttManager;
     }
 
 }
