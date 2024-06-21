@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
         input_time.setKeyListener(null); // Desactiva el teclado virtual
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
+            // Para que cargue primero el main activity y despues el fragment
             @Override
             public void run() {
                 MainActivity mainActivity = (MainActivity) getActivity();
@@ -105,8 +106,9 @@ public class HomeFragment extends Fragment {
             assert mainActivity != null;
             mainActivity.feederState.setNextMealTime(time);
             mainActivity.feederState.setFoodAmount(Integer.parseInt(amount));
-            time_label.setText(time);
-            amount_label.setText(amount);
+            setHomeData(mainActivity.feederState);
+            //time_label.setText(time);
+            //amount_label.setText(amount);
             mqttManager.publishMessage(mqttManager.publishAlimentacion, message);
         }
     }
