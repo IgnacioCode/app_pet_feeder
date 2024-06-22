@@ -3,6 +3,7 @@ package soa.L6.pet_feeder;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import soa.L6.pet_feeder.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,11 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void messageArrived(String topic, MqttMessage message) {
-            Log.d(MainActivity.class.getName(), "Mensaje recibido: " + new String(message.getPayload()));
-            if(Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADOS)) {
-                feederState.UpdateEstado(message.toString());
-                callSetHomeDataInFragment();
-            }
+            String messageContent = new String(message.getPayload());
+            Log.d(MainActivity.class.getName(), "Mensaje recibido: " + messageContent);
+
+            runOnUiThread(() -> {
+                if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADOS)) {
+                    feederState.UpdateEstado(messageContent);
+                    callSetHomeDataInFragment();
+                }
+            });
 
 
         }
@@ -97,8 +102,12 @@ public class MainActivity extends AppCompatActivity {
         return mqttManager;
     }
     private void callSetHomeDataInFragment() {
-        if (homeFragment != null) {
+        if (homeFragment != null && homeFragment.isAdded()) {
             homeFragment.setHomeData(feederState);
+        } else {
+            Log.d(MainActivity.class.getName(), "homeFragment no está listo, reintentando...");
+            getSupportFragmentManager().executePendingTransactions();
+            new android.os.Handler().postDelayed(this::callSetHomeDataInFragment, 1000); // Reintentar después de 1 segundo
         }
     }
 

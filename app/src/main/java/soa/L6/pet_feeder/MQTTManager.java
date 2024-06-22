@@ -4,7 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
@@ -52,9 +55,11 @@ public class MQTTManager {
 
     private static final String TAG = "MQTTManager";
     private MqttAndroidClient mqttAndroidClient;
+    private Context context;
     private final String clientId = MqttClient.generateClientId();
 
     public MQTTManager(Context context, MqttCallback callback) {
+        this.context = context;
         mqttAndroidClient = new MqttAndroidClient(context, PetFeederConstants.MQTT_SERVER_URI, clientId, Ack.AUTO_ACK);
         Log.d(TAG, "Internet conectado? " + isInternetConnected(context));
         mqttAndroidClient.setCallback(callback);
@@ -81,11 +86,13 @@ public class MQTTManager {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "Conectado exitosamente");
                     subscribeToTopic(PetFeederConstants.SUB_TOPIC_ESTADOS);
+                    showToast("Conexión exitosa");
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.d(TAG, "Fallo al conectar: " + exception.toString());
+                    showToast("Fallo al conectar: " + exception.getMessage());
                 }
             });
         } catch (Exception e) {
@@ -161,6 +168,11 @@ public class MQTTManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        });
     }
 
 }

@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +119,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void setHomeData(FeederState state){
-
+        Log.d(HomeFragment.class.getName(), "Feeder State Updateado: " + state);
         time_label.setText(state.getNextMealTime());
         amount_label.setText(String.format("%.2f",state.getFoodAmount()));
         // Handle refillNeeded
@@ -134,5 +135,8 @@ public class HomeFragment extends Fragment {
         } else {
             clearNeedLabel.setBackgroundResource(R.drawable.tag_informe_desactivado); // This removes the background drawable
         }
+        // Debug logs to check the drawable change
+        Log.d(HomeFragment.class.getName(), "Refill Label Drawable: " + (state.isRefillNeed() ? "tag_informe" : "tag_informe_desactivado"));
+        Log.d(HomeFragment.class.getName(), "Clear Label Drawable: " + (state.isClearNeed() ? "tag_informe" : "tag_informe_desactivado"));
     }
 }

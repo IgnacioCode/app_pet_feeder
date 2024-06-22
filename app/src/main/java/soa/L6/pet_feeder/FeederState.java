@@ -1,5 +1,7 @@
 package soa.L6.pet_feeder;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,17 @@ public class FeederState {
         this.foodAmount = foodAmount;
         this.refillNeed = refillNeed;
         this.clearNeed = clearNeed;
+    }
+    @Override
+    public String toString() {
+        return "FeederState{" +
+                "nextMealTime='" + nextMealTime + '\'' +
+                ", foodAmount=" + foodAmount +
+                ", refillNeed=" + refillNeed +
+                ", clearNeed=" + clearNeed +
+                ", estado=" + estado +
+                ", alimentaciones=" + alimentaciones +
+                '}';
     }
     public String getNextMealTime() {
         return nextMealTime;
@@ -62,5 +75,6 @@ public class FeederState {
             refillNeed = false;
             clearNeed = false;
         }
+        Log.d(FeederState.class.getName(), "Estado Updateado " + estado);
     }
 }
