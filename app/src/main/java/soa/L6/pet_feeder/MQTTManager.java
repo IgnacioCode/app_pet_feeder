@@ -1,21 +1,18 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.ByteArrayInputStream;
@@ -55,53 +52,12 @@ public class MQTTManager {
 
     private static final String TAG = "MQTTManager";
     private MqttAndroidClient mqttAndroidClient;
-    private final String serverUri = "ssl://y8ad1cae.ala.us-east-1.emqxsl.com:8883";
     private final String clientId = MqttClient.generateClientId();
-    private final String subscriptionTopic = "/pet-feeder/estado";
-    public final String publishAlimentacion = "/pet-feeder/alimentacion";
-    private final String username = "PET_FEEDER_L6";
-    private final String password = "123456";
 
-    public MQTTManager(Context context) {
-        mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId, Ack.AUTO_ACK);
-       /*
-        mqttAndroidClient.setTraceEnabled(true);
-        mqttAndroidClient.setTraceCallback(new MqttTraceHandler() {
-            @Override
-            public void traceDebug(String source, String message) {
-                Log.d(TAG, source + " - " + message);
-            }
-
-            @Override
-            public void traceError(String source, String message) {
-                Log.e(TAG, source + " - " + message);
-            }
-
-            @Override
-            public void traceException(String source, String message, Exception e) {
-                Log.e(TAG, source + " - " + message, e);
-            }
-        });
-        */
-
-
+    public MQTTManager(Context context, MqttCallback callback) {
+        mqttAndroidClient = new MqttAndroidClient(context, PetFeederConstants.MQTT_SERVER_URI, clientId, Ack.AUTO_ACK);
         Log.d(TAG, "Internet conectado? " + isInternetConnected(context));
-        mqttAndroidClient.setCallback(new MqttCallback() {
-            @Override
-            public void connectionLost(Throwable cause) {
-                Log.d(TAG, "Conexión perdida");
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) {
-                Log.d(TAG, "Mensaje recibido: " + new String(message.getPayload()));
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                Log.d(TAG, "Entrega completada");
-            }
-        });
+        mqttAndroidClient.setCallback(callback);
     }
     public boolean isInternetConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -114,8 +70,8 @@ public class MQTTManager {
         try {
 
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setUserName(username);
-            options.setPassword(password.toCharArray());
+            options.setUserName(PetFeederConstants.USER_NAME_MQTT);
+            options.setPassword(PetFeederConstants.PASSWORD_MQTT.toCharArray());
             options.setSocketFactory(getSocketFactory());
 
             IMqttToken token = mqttAndroidClient.connect(options);
@@ -124,7 +80,7 @@ public class MQTTManager {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "Conectado exitosamente");
-                    subscribeToTopic();
+                    subscribeToTopic(PetFeederConstants.SUB_TOPIC_ESTADOS);
                 }
 
                 @Override
@@ -138,9 +94,9 @@ public class MQTTManager {
         }
     }
 
-    private void subscribeToTopic() {
+    private void subscribeToTopic(String topic) {
         try {
-            mqttAndroidClient.subscribe(subscriptionTopic, 0);
+            mqttAndroidClient.subscribe(topic, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,10 +161,6 @@ public class MQTTManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public FeederState getNewFeederState(Context context){
-        return new FeederState();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.dashboard;
+package soa.L6.pet_feeder.ui.dashboard;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

@@ -1,42 +1,68 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
+import soa.L6.pet_feeder.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.myapplication.databinding.ActivityMainBinding;
+import soa.L6.pet_feeder.databinding.ActivityMainBinding;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String FILE_NAME = "pets.dat";
 
     private ActivityMainBinding binding;
+    public HomeFragment homeFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
     public List<Pet> petList;
 
     public FeederState feederState;
+    private final MqttCallback callback = new MqttCallback() {
+        @Override
+        public void connectionLost(Throwable cause) {
+            Log.d(MainActivity.class.getName(), "Conexión perdida");
+        }
 
+        @Override
+        public void messageArrived(String topic, MqttMessage message) {
+            Log.d(MainActivity.class.getName(), "Mensaje recibido: " + new String(message.getPayload()));
+            if(Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADOS)) {
+                feederState.UpdateEstado(message.toString());
+                callSetHomeDataInFragment();
+            }
+
+
+        }
+
+        @Override
+        public void deliveryComplete(IMqttDeliveryToken token) {
+            Log.d(MainActivity.class.getName(), "Entrega completada");
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mqttManager = new MQTTManager(this);
+
+        mqttManager = new MQTTManager(this,callback);
         mqttManager.connect();
-        feederState = mqttManager.getNewFeederState(this);
+        feederState = new FeederState();
 
         super.onCreate(savedInstanceState);
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -53,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        petRecorder = new PetRecorder(FILE_NAME);
+        petRecorder = new PetRecorder(PetFeederConstants.FILE_NAME_PETS);
         petRecorder.loadPetsFromFile(this);
 
         Pet newCat = new Pet("Pepe","CA");
@@ -69,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
     }
     public MQTTManager getMQTTManager() {
         return mqttManager;
+    }
+    private void callSetHomeDataInFragment() {
+        if (homeFragment != null) {
+            homeFragment.setHomeData(feederState);
+        }
     }
 
 }

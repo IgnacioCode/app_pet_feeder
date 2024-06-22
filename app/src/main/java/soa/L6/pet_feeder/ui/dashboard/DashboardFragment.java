@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.dashboard;
+package soa.L6.pet_feeder.ui.dashboard;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,11 +13,11 @@ import androidx.fragment.app.Fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.Pet;
-import com.example.myapplication.PetRecorder;
-import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentDashboardBinding;
+import soa.L6.pet_feeder.MainActivity;
+import soa.L6.pet_feeder.Pet;
+import soa.L6.pet_feeder.PetRecorder;
+import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
 

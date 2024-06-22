@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
 
 import android.content.Context;
 

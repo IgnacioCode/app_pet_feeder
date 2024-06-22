@@ -1,10 +1,9 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
 
 import android.content.Context;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class PetRecorder {

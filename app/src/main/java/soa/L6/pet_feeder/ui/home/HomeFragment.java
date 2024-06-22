@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.home;
+package soa.L6.pet_feeder.ui.home;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -16,16 +16,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.FeederState;
-import com.example.myapplication.MQTTManager;
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentHomeBinding;
+import soa.L6.pet_feeder.FeederState;
+import soa.L6.pet_feeder.MQTTManager;
+import soa.L6.pet_feeder.MainActivity;
+import soa.L6.pet_feeder.PetFeederConstants;
+import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.databinding.FragmentHomeBinding;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeFragment extends Fragment {
 
@@ -48,10 +46,10 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
-            mqttManager = mainActivity.getMQTTManager();
-        }
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mqttManager = mainActivity.getMQTTManager();
+        mainActivity.homeFragment = this;
+
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
@@ -70,7 +68,8 @@ public class HomeFragment extends Fragment {
         input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
         input_time.setCursorVisible(false); // Oculta el cursor para que no parezca editable
         input_time.setKeyListener(null); // Desactiva el teclado virtual
-
+        setHomeData(mainActivity.feederState);
+        /*
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             // Para que cargue primero el main activity y despues el fragment
             @Override
@@ -78,9 +77,10 @@ public class HomeFragment extends Fragment {
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if (mainActivity != null && mainActivity.feederState != null) {
                     setHomeData(mainActivity.feederState);
+                    mainActivity.homeFragment = this;
                 }
             }
-        });
+        });*/
 
         return root;
     }
@@ -107,9 +107,7 @@ public class HomeFragment extends Fragment {
             mainActivity.feederState.setNextMealTime(time);
             mainActivity.feederState.setFoodAmount(Integer.parseInt(amount));
             setHomeData(mainActivity.feederState);
-            //time_label.setText(time);
-            //amount_label.setText(amount);
-            mqttManager.publishMessage(mqttManager.publishAlimentacion, message);
+            mqttManager.publishMessage(PetFeederConstants.PUB_TOPIC_ALIMENTACION, message);
         }
     }
 
@@ -123,11 +121,18 @@ public class HomeFragment extends Fragment {
 
         time_label.setText(state.getNextMealTime());
         amount_label.setText(String.format("%.2f",state.getFoodAmount()));
-        if(state.isRefillNeed()){
+        // Handle refillNeeded
+        if (state.isRefillNeed()) {
             refillLabel.setBackgroundResource(R.drawable.tag_informe);
+        } else {
+            refillLabel.setBackgroundResource(R.drawable.tag_informe_desactivado); // This removes the background drawable
         }
-        if(state.isClearNeed()){
+
+        // Handle clearNeeded
+        if (state.isClearNeed()) {
             clearNeedLabel.setBackgroundResource(R.drawable.tag_informe);
+        } else {
+            clearNeedLabel.setBackgroundResource(R.drawable.tag_informe_desactivado); // This removes the background drawable
         }
     }
 }

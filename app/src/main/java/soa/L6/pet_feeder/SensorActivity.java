@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;

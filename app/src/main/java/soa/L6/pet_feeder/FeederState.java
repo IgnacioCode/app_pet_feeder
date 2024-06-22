@@ -1,4 +1,8 @@
-package com.example.myapplication;
+package soa.L6.pet_feeder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class FeederState {
 
@@ -6,6 +10,8 @@ public class FeederState {
     private double foodAmount;
     private boolean refillNeed;
     private boolean clearNeed;
+    private EstadoEmbebido estado;
+    private List<Alimentacion> alimentaciones = new ArrayList<>();
 
     public FeederState(){
         nextMealTime = "";
@@ -42,5 +48,19 @@ public class FeederState {
     }
     public void setClearNeed(boolean clearNeed) {
         this.clearNeed = clearNeed;
+    }
+    public void AddAlimentacion(String horario, double cantComida) {
+        alimentaciones.add(new Alimentacion(horario,cantComida));
+    }
+    public void UpdateEstado(String message) {
+        estado = EstadoEmbebido.fromString(message);
+        if (Objects.equals(estado.getEstadoActual(), PetFeederConstants.ESTADO_RENOVAR_COMIDA))
+            clearNeed = true;
+        if (Objects.equals(estado.getEstadoActual(), PetFeederConstants.ESTADO_PEDIR_RECARGA))
+            refillNeed = true;
+        if(Objects.equals(estado.getEstadoActual(), PetFeederConstants.ESTADO_ESPERA)) {
+            refillNeed = false;
+            clearNeed = false;
+        }
     }
 }

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "soa.L6.pet_feeder"
     compileSdk = 34
     defaultConfig {
-        applicationId = "com.example.myapplication"
-        minSdk = 24
+        applicationId = "soa.L6.pet_feeder"
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

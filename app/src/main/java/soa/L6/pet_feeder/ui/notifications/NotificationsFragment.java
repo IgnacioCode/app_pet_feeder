@@ -1,26 +1,21 @@
-package com.example.myapplication.ui.notifications;
+package soa.L6.pet_feeder.ui.notifications;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.Pet;
-import com.example.myapplication.PetRecorder;
-import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentNotificationsBinding;
-
-import java.util.List;
+import soa.L6.pet_feeder.MainActivity;
+import soa.L6.pet_feeder.PetRecorder;
+import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
 
