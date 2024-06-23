@@ -87,6 +87,7 @@ public class MQTTManager {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.d(TAG, "Conectado exitosamente");
                     subscribeToTopic(PetFeederConstants.SUB_TOPIC_ESTADOS);
+                    subscribeToTopic(PetFeederConstants.SUB_TOPIC_ESTADISTICA);
                     showToast("Conexión exitosa");
                 }
 

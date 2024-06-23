@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
-
     private ActivityMainBinding binding;
     public HomeFragment homeFragment;
     public MQTTManager mqttManager;
