@@ -1,4 +1,4 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
+
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;

@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import soa.L6.pet_feeder.MainActivity;
-import soa.L6.pet_feeder.PetRecorder;
+import soa.L6.pet_feeder.Activities.MainActivity;
+import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
 import soa.L6.pet_feeder.databinding.FragmentNotificationsBinding;
 

@@ -1,4 +1,4 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Utils;
 
 public class PetFeederConstants {
     // Definir las constantes

@@ -1,10 +1,12 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Model;
 
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import soa.L6.pet_feeder.Utils.PetFeederConstants;
 
 public class FeederState {
 

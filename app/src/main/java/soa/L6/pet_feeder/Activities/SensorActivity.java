@@ -1,4 +1,4 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import soa.L6.pet_feeder.R;
 
 public class SensorActivity extends AppCompatActivity {
 

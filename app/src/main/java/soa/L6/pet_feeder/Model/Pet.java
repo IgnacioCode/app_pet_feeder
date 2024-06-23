@@ -1,4 +1,4 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Model;
 
 import java.io.Serializable;
 import java.util.Objects;

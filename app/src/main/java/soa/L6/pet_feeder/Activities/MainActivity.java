@@ -1,15 +1,19 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Activities;
 
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
+import soa.L6.pet_feeder.Model.FeederState;
+import soa.L6.pet_feeder.Model.Pet;
+import soa.L6.pet_feeder.Model.PetRecorder;
+import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.Utils.MQTTManager;
+import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;

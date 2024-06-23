@@ -1,4 +1,4 @@
-package soa.L6.pet_feeder;
+package soa.L6.pet_feeder.Model;
 public class Alimentacion implements Comparable<Alimentacion> {
     private String horario;
     private double cantComida;

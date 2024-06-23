@@ -2,8 +2,6 @@ package soa.L6.pet_feeder.ui.home;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import soa.L6.pet_feeder.FeederState;
-import soa.L6.pet_feeder.MQTTManager;
-import soa.L6.pet_feeder.MainActivity;
-import soa.L6.pet_feeder.PetFeederConstants;
+import soa.L6.pet_feeder.Model.FeederState;
+import soa.L6.pet_feeder.Utils.MQTTManager;
+import soa.L6.pet_feeder.Activities.MainActivity;
+import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.R;
 import soa.L6.pet_feeder.databinding.FragmentHomeBinding;
 import android.widget.Button;
