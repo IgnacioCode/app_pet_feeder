@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
                     feederState.UpdateEstado(messageContent);
                     callSetHomeDataInFragment();
                 }
+                if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADISTICA)) {
+                   //
+                }
             });
 
 
