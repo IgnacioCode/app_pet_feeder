@@ -9,7 +9,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import soa.L6.pet_feeder.Model.FeederRecorder;
 import soa.L6.pet_feeder.Model.FeederState;
+import soa.L6.pet_feeder.Model.Food;
 import soa.L6.pet_feeder.Model.Pet;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public HomeFragment homeFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
+    public FeederRecorder feederRecorder;
     public List<Pet> petList;
     public FeederState feederState;
 
@@ -53,15 +56,40 @@ public class MainActivity extends AppCompatActivity {
         public void messageArrived(String topic, MqttMessage message) {
             String messageContent = new String(message.getPayload());
             Log.d(MainActivity.class.getName(), "Mensaje recibido: " + messageContent);
-
             runOnUiThread(() -> {
+
                 if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADOS)) {
                     feederState.UpdateEstado(messageContent);
                     callSetHomeDataInFragment();
                 }
                 if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADISTICA)) {
-                   //
+                    String[] messageWithSplit = messageContent.split(";");
+                    // por defecto nuevo rfid detectado le pongo nombre mascota
+                    Pet messageCat = new Pet("Mascota ",messageWithSplit[0]);
+                    if(petRecorder.exists(messageCat)) // mascota ya existe
+                    {
+                        //agregar mascota con peso que comio
+                        Pet modify = petRecorder.getPetList().stream().filter(x -> x.compareTo(messageCat) == 0).findAny().get();
+                        modify.record_meal(Double.parseDouble(messageWithSplit[1]));
+                        petRecorder.updatePet(modify);
+                        callSetHomeDataInFragment();
+
+                    }
+                    else //crear nueva mascota
+                    {
+                        //agregar peso que comio
+                        messageCat.record_meal(Double.parseDouble(messageWithSplit[1]));
+                        //agregar mascota a lista
+                        petRecorder.addPetToList(messageCat);
+
+                        callSetHomeDataInFragment();
+
+                    }
+
+                    Log.d("topico estadistica",petRecorder.getPetList().toString());
+                    petRecorder.savePetsToFile(MainActivity.this);
                 }
+
             });
 
 
@@ -78,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         mqttManager = new MQTTManager(this,callback);
         mqttManager.connect();
-        feederState = new FeederState();
+        feederState = new FeederState(this);
 
         super.onCreate(savedInstanceState);
 
@@ -148,8 +176,23 @@ public class MainActivity extends AppCompatActivity {
         newCat.record_meal(24.94);
         petRecorder.addPetToList(newCat);
 
-        Log.d("TEST",petRecorder.getPetList().toString());
+        Log.d("TEST PET",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
+
+        feederRecorder = new FeederRecorder(PetFeederConstants.FILE_NAME_FOODS);
+        feederRecorder.loadFoodsFromFile(this);
+
+        Food newFood1 = new Food("12:00",50.00);
+        Food newFood2 = new Food("15:00",50.00);
+        Food newFood3 = new Food("19:00",50.00);
+
+        feederRecorder.addFoodToList(newFood1);
+        feederRecorder.addFoodToList(newFood2);
+        feederRecorder.addFoodToList(newFood3);
+
+        Log.d("TEST FOOD",feederRecorder.getFoodList().toString());
+
+        //feederRecorder.saveFoodToFile(this);
     }
     @Override
     protected void onResume() {

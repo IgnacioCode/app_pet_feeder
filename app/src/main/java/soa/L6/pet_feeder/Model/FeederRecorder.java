@@ -2,26 +2,32 @@ package soa.L6.pet_feeder.Model;
 
 import android.content.Context;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class PetRecorder {
+public class FeederRecorder {
 
-    private List<Pet> petList;
+    private List<Food> foodList;
     private String filename;
-    public PetRecorder(String filename){
-        petList = new ArrayList<>();
+    public FeederRecorder(String filename){
+        foodList = new ArrayList<>();
         this.filename = filename;
     }
 
-    public void savePetsToFile(Context context) {
+    public void saveFoodToFile(Context context) {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
             fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
             oos = new ObjectOutputStream(fos);
-            oos.writeObject(petList);
+            oos.writeObject(foodList);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -43,14 +49,14 @@ public class PetRecorder {
     }
 
     // Método para cargar una lista de Pet desde un archivo
-    public void loadPetsFromFile(Context context) {
+    public void loadFoodsFromFile(Context context) {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
-        List<Pet> pets = new ArrayList<>();
+        List<Food> foods = new ArrayList<>();
         try {
             fis = context.openFileInput(filename);
             ois = new ObjectInputStream(fis);
-            pets = (List<Pet>) ois.readObject();
+            foods = (List<Food>) ois.readObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException | ClassNotFoundException e) {
@@ -71,30 +77,25 @@ public class PetRecorder {
                 }
             }
         }
-        petList = pets;
+        foodList = foods;
     }
 
-    public void addPetToList(Pet newPet){
-        if (!petList.contains(newPet)) {
-            petList.add(newPet);
+    public void addFoodToList(Food newFood){
+        if (!foodList.contains(newFood)) {
+            foodList.add(newFood);
         }
     }
 
-    public void updatePet(Pet petUpdate)
-    {
-        petList.replaceAll(x -> x.compareTo(petUpdate) > 0 ? petUpdate : x);
+    public void clearFoodList(){
+        foodList.clear();
     }
 
-    public void clearPetList(){
-        petList.clear();
+    public List<Food> getFoodList() {
+        return foodList;
     }
 
-    public List<Pet> getPetList() {
-        return petList;
-    }
-
-    public void setPetList(List<Pet> petList) {
-        this.petList = petList;
+    public void setFoodList(List<Food> foodList) {
+        this.foodList = foodList;
     }
 
     public String getFilename() {
@@ -105,9 +106,18 @@ public class PetRecorder {
         this.filename = filename;
     }
 
-    public boolean exists(Pet pet)
+    public boolean exists(Food food)
     {
-        return petList.stream().anyMatch(x -> x.compareTo(pet) == 0);
+        return foodList.stream().anyMatch(x -> x.getHour().compareTo(food.getHour()) == 0);
     }
 
+    public void updateFood(Food foodUpdate)
+    {
+        foodList.replaceAll(x -> x.compareTo(foodUpdate) > 0 ? foodUpdate : x);
+    }
+
+    public Food getMinHour()
+    {
+        return foodList.stream().min(Comparator.comparing(Food::getHour)).get();
+    }
 }
