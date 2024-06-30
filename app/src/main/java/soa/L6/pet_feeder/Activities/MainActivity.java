@@ -27,6 +27,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -46,15 +47,40 @@ public class MainActivity extends AppCompatActivity {
         public void messageArrived(String topic, MqttMessage message) {
             String messageContent = new String(message.getPayload());
             Log.d(MainActivity.class.getName(), "Mensaje recibido: " + messageContent);
-
             runOnUiThread(() -> {
+
                 if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADOS)) {
                     feederState.UpdateEstado(messageContent);
                     callSetHomeDataInFragment();
                 }
                 if (Objects.equals(topic, PetFeederConstants.SUB_TOPIC_ESTADISTICA)) {
-                   //
+                    String[] messageWithSplit = messageContent.split(";");
+                    // por defecto nuevo rfid detectado le pongo nombre mascota
+                    Pet messageCat = new Pet("Mascota ",messageWithSplit[0]);
+                    if(petRecorder.exists(messageCat)) // mascota ya existe
+                    {
+                        //agregar mascota con peso que comio
+                        Pet modify = petRecorder.getPetList().stream().filter(x -> x.compareTo(messageCat) == 0).findAny().get();
+                        modify.record_meal(Double.parseDouble(messageWithSplit[1]));
+                        petRecorder.updatePet(modify);
+                        callSetHomeDataInFragment();
+
+                    }
+                    else //crear nueva mascota
+                    {
+                        //agregar peso que comio
+                        messageCat.record_meal(Double.parseDouble(messageWithSplit[1]));
+                        //agregar mascota a lista
+                        petRecorder.addPetToList(messageCat);
+
+                        callSetHomeDataInFragment();
+
+                    }
+
+                    Log.d("topico estadistica",petRecorder.getPetList().toString());
+                    petRecorder.savePetsToFile(MainActivity.this);
                 }
+
             });
 
 

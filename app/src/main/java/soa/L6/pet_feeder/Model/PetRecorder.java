@@ -80,6 +80,11 @@ public class PetRecorder {
         }
     }
 
+    public void updatePet(Pet petUpdate)
+    {
+        petList.replaceAll(x -> x.compareTo(petUpdate) > 0 ? petUpdate : x);
+    }
+
     public void clearPetList(){
         petList.clear();
     }
@@ -98,5 +103,10 @@ public class PetRecorder {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public boolean exists(Pet pet)
+    {
+        return petList.stream().anyMatch(x -> x.compareTo(pet) == 0);
     }
 }
