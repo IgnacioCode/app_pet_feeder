@@ -151,6 +151,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TEST",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
+    }
     public MQTTManager getMQTTManager() {
         return mqttManager;
     }

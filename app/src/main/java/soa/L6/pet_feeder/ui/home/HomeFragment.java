@@ -1,17 +1,21 @@
 package soa.L6.pet_feeder.ui.home;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -94,9 +98,9 @@ public class HomeFragment extends Fragment {
         View popupView = inflater.inflate(R.layout.popup_layout, null);
 
         // Crear el AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomDialogTheme));
         builder.setView(popupView)
-                .setTitle("Popup Personalizado")
+                .setTitle("Alimentar Ahora")
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -123,7 +127,17 @@ public class HomeFragment extends Fragment {
 
         // Mostrar el AlertDialog
         dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                EditText input = popupView.findViewById(R.id.popup_input);
+                input.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
         dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
 
 
     }
