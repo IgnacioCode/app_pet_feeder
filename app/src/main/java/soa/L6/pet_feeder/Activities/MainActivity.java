@@ -1,6 +1,11 @@
 package soa.L6.pet_feeder.Activities;
 
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -31,12 +36,14 @@ import java.util.Optional;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
+    private SensorManager sensorManager;
+    private SensorEventListener sensorEventListener;
     public HomeFragment homeFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
     public List<Pet> petList;
-
     public FeederState feederState;
+
     private final MqttCallback callback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable cause) {
@@ -91,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(MainActivity.class.getName(), "Entrega completada");
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -99,6 +107,46 @@ public class MainActivity extends AppCompatActivity {
         feederState = new FeederState();
 
         super.onCreate(savedInstanceState);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorEventListener = new SensorEventListener() {
+            private static final float SHAKE_THRESHOLD = 500f; // Puedes ajustar este valor según tu necesidad
+            private long lastUpdate = 0;
+            private float lastX, lastY, lastZ;
+
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                    long currentTime = System.currentTimeMillis();
+                    if ((currentTime - lastUpdate) > 100) {
+                        long timeDifference = (currentTime - lastUpdate);
+                        lastUpdate = currentTime;
+
+                        float x = event.values[0];
+                        float y = event.values[1];
+                        float z = event.values[2];
+
+                        float speed = Math.abs(x + y + z - lastX - lastY - lastZ) / timeDifference * 10000;
+
+                        if (speed > SHAKE_THRESHOLD) {
+                            System.out.println("SE DETECTO SHAKE!");
+                            callAcceptDialog();
+                        }
+
+                        lastX = x;
+                        lastY = y;
+                        lastZ = z;
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // No necesitas implementar esto, pero es obligatorio
+            }
+        };
+
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -129,6 +177,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TEST",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(sensorEventListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
+    }
     public MQTTManager getMQTTManager() {
         return mqttManager;
     }
@@ -142,4 +201,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void callAcceptDialog() {
+        if (homeFragment != null && homeFragment.isAdded()) {
+            homeFragment.acceptDialog();
+        } else {
+            Log.d(MainActivity.class.getName(), "homeFragment no está listo, reintentando...");
+            getSupportFragmentManager().executePendingTransactions();
+            new android.os.Handler().postDelayed(this::callAcceptDialog, 1000); // Reintentar después de 1 segundo
+        }
+    }
 }

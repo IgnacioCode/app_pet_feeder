@@ -129,6 +129,15 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/feed_now_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/purple_500"
+            android:text="ALIMENTAR AHORA"
+            android:textColor="#000"
+            app:cornerRadius="10dp" />
     </LinearLayout>
 
     <EditText

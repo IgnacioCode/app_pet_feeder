@@ -1,15 +1,21 @@
 package soa.L6.pet_feeder.ui.home;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,12 +35,13 @@ public class HomeFragment extends Fragment {
     private static final String NO_DATA_TEXT = "-";
     private static final int NO_DATA_TIME = -1;
     private FragmentHomeBinding binding;
-
+    private AlertDialog dialog;
     private TextView time_label;
     private TextView amount_label;
     private TextView refillLabel;
     private TextView clearNeedLabel;
     private Button modify_schedule_btn;
+    private Button feed_now;
     private EditText input_time;
     private EditText input_amount;
 
@@ -61,9 +68,11 @@ public class HomeFragment extends Fragment {
         clearNeedLabel = root.findViewById(R.id.txt_aviso_cambio);
         btnAddTime = root.findViewById(R.id.btnAddTime);
         modify_schedule_btn = root.findViewById(R.id.update_button);
+        feed_now = root.findViewById(R.id.feed_now_button);
         // Manejar el clic del botón para agregar horarios
         btnAddTime.setOnClickListener(v -> showTimePickerDialog());
         modify_schedule_btn.setOnClickListener(v -> saveNewAlimentacion());
+        feed_now.setOnClickListener(v -> feedNowDialog());
         input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
         input_time.setCursorVisible(false); // Oculta el cursor para que no parezca editable
         input_time.setKeyListener(null); // Desactiva el teclado virtual
@@ -83,6 +92,64 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
+    private void feedNowDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View popupView = inflater.inflate(R.layout.popup_layout, null);
+
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomDialogTheme));
+        builder.setView(popupView)
+                .setTitle("Alimentar Ahora")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Aceptar"
+                        EditText input = popupView.findViewById(R.id.popup_input);
+                        String userInput = input.getText().toString();
+
+                        if (!userInput.isEmpty()) {
+                            String message = "hh;" + userInput;
+                            mqttManager.publishMessage(PetFeederConstants.PUB_TOPIC_HORA_COMIDA, message);
+                        } else {
+                            Toast.makeText(getContext(), "Por favor completa el campo de comida", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Cancelar"
+                        dialog.dismiss();
+                    }
+                });
+
+        // Mostrar el AlertDialog
+        dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                EditText input = popupView.findViewById(R.id.popup_input);
+                input.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.GONE);
+
+
+    }
+
+    public void acceptDialog(){
+        if(dialog != null){
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.performClick();
+        }
+
+    }
+
     private void showTimePickerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             String time = String.format("%02d:%02d", hourOfDay, minute);
