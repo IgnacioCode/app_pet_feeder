@@ -46,7 +46,7 @@ public class SensorActivity extends AppCompatActivity {
 
                         if (speed > SHAKE_THRESHOLD) {
                             System.out.println("SE DETECTO SHAKE!");
-                            //label_shake.setVisibility(View.VISIBLE);
+                            //mandar msj mqtt!!!! :D :D :D: D
                         }
 
                         lastX = x;
