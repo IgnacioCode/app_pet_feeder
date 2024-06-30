@@ -1,5 +1,6 @@
 package soa.L6.pet_feeder.Model;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,10 +17,13 @@ public class FeederState {
     private boolean clearNeed;
     private EstadoEmbebido estado;
     private List<Alimentacion> alimentaciones = new ArrayList<>();
+    private FeederRecorder feederRecorder = new FeederRecorder(PetFeederConstants.FILE_NAME_FOODS);
 
-    public FeederState(){
-        nextMealTime = "";
-        foodAmount = 0;
+    public FeederState(Context context){
+        feederRecorder.loadFoodsFromFile(context);
+        Food food = feederRecorder.getMinHour();
+        nextMealTime = food.getHour();
+        foodAmount = food.getFood_amount();
         refillNeed = false;
         clearNeed = false;
     }

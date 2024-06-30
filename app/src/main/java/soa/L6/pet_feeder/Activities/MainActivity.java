@@ -9,7 +9,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import soa.L6.pet_feeder.Model.FeederRecorder;
 import soa.L6.pet_feeder.Model.FeederState;
+import soa.L6.pet_feeder.Model.Food;
 import soa.L6.pet_feeder.Model.Pet;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
@@ -32,7 +34,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public HomeFragment homeFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
+    public FeederRecorder feederRecorder;
     public List<Pet> petList;
     public FeederState feederState;
 
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         mqttManager = new MQTTManager(this,callback);
         mqttManager.connect();
-        feederState = new FeederState();
+        feederState = new FeederState(this);
 
         super.onCreate(savedInstanceState);
 
@@ -174,8 +176,23 @@ public class MainActivity extends AppCompatActivity {
         newCat.record_meal(24.94);
         petRecorder.addPetToList(newCat);
 
-        Log.d("TEST",petRecorder.getPetList().toString());
+        Log.d("TEST PET",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
+
+        feederRecorder = new FeederRecorder(PetFeederConstants.FILE_NAME_FOODS);
+        feederRecorder.loadFoodsFromFile(this);
+
+        Food newFood1 = new Food("12:00",50.00);
+        Food newFood2 = new Food("15:00",50.00);
+        Food newFood3 = new Food("19:00",50.00);
+
+        feederRecorder.addFoodToList(newFood1);
+        feederRecorder.addFoodToList(newFood2);
+        feederRecorder.addFoodToList(newFood3);
+
+        Log.d("TEST FOOD",feederRecorder.getFoodList().toString());
+
+        //feederRecorder.saveFoodToFile(this);
     }
     @Override
     protected void onResume() {

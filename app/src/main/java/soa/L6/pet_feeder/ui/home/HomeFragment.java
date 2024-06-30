@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import soa.L6.pet_feeder.Model.FeederState;
+import soa.L6.pet_feeder.Model.Food;
+import soa.L6.pet_feeder.Model.Pet;
 import soa.L6.pet_feeder.Utils.MQTTManager;
 import soa.L6.pet_feeder.Activities.MainActivity;
 import soa.L6.pet_feeder.Utils.PetFeederConstants;
@@ -76,6 +78,7 @@ public class HomeFragment extends Fragment {
         input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
         input_time.setCursorVisible(false); // Oculta el cursor para que no parezca editable
         input_time.setKeyListener(null); // Desactiva el teclado virtual
+
         setHomeData(mainActivity.feederState);
         /*
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -170,8 +173,27 @@ public class HomeFragment extends Fragment {
         } else {
             String message = time + ";" + amount;
             assert mainActivity != null;
-            mainActivity.feederState.setNextMealTime(time);
-            mainActivity.feederState.setFoodAmount(Integer.parseInt(amount));
+
+            Food newFood = new Food(time,Double.parseDouble(amount));
+
+            if(mainActivity.feederRecorder.exists(newFood))
+            {
+                Food modify = mainActivity.feederRecorder.getFoodList().stream().filter(x -> x.getHour().compareTo(newFood.getHour()) == 0).findAny().get();
+                modify.setFood_amount(newFood.getFood_amount());
+                mainActivity.feederRecorder.updateFood(modify);
+            }
+            else
+            {
+                mainActivity.feederRecorder.addFoodToList(newFood);
+            }
+
+            mainActivity.feederRecorder.saveFoodToFile(mainActivity);
+            Food nextTime = mainActivity.feederRecorder.getMinHour();
+
+            mainActivity.feederState.setNextMealTime(nextTime.getHour());
+            mainActivity.feederState.setFoodAmount(nextTime.getFood_amount());
+
+
             setHomeData(mainActivity.feederState);
             mqttManager.publishMessage(PetFeederConstants.PUB_TOPIC_ALIMENTACION, message);
         }
@@ -185,6 +207,7 @@ public class HomeFragment extends Fragment {
 
     public void setHomeData(FeederState state){
         Log.d(HomeFragment.class.getName(), "Feeder State Updateado: " + state);
+
         time_label.setText(state.getNextMealTime());
         amount_label.setText(String.format("%.2f",state.getFoodAmount()));
         // Handle refillNeeded

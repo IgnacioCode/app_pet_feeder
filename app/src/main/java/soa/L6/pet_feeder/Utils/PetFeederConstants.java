@@ -17,5 +17,6 @@ public class PetFeederConstants {
     public static final String ESTADO_SERVIR_COMIDA = "ESTADO_SERVIR_COMIDA";
         public static final String ESTADO_PEDIR_RECARGA = "ESTADO_PEDIR_RECARGA";
     public static final String FILE_NAME_PETS = "pets.dat";
+    public static final String FILE_NAME_FOODS = "foods.dat";
 
 }
