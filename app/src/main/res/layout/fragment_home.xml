@@ -98,10 +98,14 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/btnAddTime"
+            android:id="@+id/feed_now_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Agregar Horario" />
+            android:backgroundTint="@color/purple_500"
+            android:text="ALIMENTAR AHORA"
+            android:textColor="#000"
+            app:cornerRadius="10dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -130,14 +134,6 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/feed_now_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/purple_500"
-            android:text="ALIMENTAR AHORA"
-            android:textColor="#000"
-            app:cornerRadius="10dp" />
     </LinearLayout>
 
     <EditText
@@ -156,11 +152,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/info_recarga"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/purple_500"
         android:hint="Ingresar horario"
         android:inputType="none"
-        android:textColor="?attr/editTextColor"/>
+        android:textColor="?attr/editTextColor" />
 
     <Button
         android:id="@+id/update_button"

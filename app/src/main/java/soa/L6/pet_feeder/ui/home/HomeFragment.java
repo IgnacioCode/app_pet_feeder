@@ -45,7 +45,6 @@ public class HomeFragment extends Fragment {
     private EditText input_time;
     private EditText input_amount;
 
-    private Button btnAddTime;
     private MQTTManager mqttManager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -66,14 +65,13 @@ public class HomeFragment extends Fragment {
         amount_label = root.findViewById(R.id.food_quantity);
         refillLabel = root.findViewById(R.id.txt_aviso_recarga);
         clearNeedLabel = root.findViewById(R.id.txt_aviso_cambio);
-        btnAddTime = root.findViewById(R.id.btnAddTime);
         modify_schedule_btn = root.findViewById(R.id.update_button);
         feed_now = root.findViewById(R.id.feed_now_button);
         // Manejar el clic del botón para agregar horarios
-        btnAddTime.setOnClickListener(v -> showTimePickerDialog());
+        input_time.setOnClickListener(v -> showTimePickerDialog());
         modify_schedule_btn.setOnClickListener(v -> saveNewAlimentacion());
         feed_now.setOnClickListener(v -> feedNowDialog());
-        input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
+        //input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
         input_time.setCursorVisible(false); // Oculta el cursor para que no parezca editable
         input_time.setKeyListener(null); // Desactiva el teclado virtual
         setHomeData(mainActivity.feederState);
