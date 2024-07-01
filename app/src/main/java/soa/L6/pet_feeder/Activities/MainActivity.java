@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
         petRecorder = new PetRecorder(PetFeederConstants.FILE_NAME_PETS);
         petRecorder.loadPetsFromFile(this);
 
-        Log.d("TEST FOOD",feederRecorder.getFoodList().toString());
 
     }
     @Override
