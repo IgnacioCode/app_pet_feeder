@@ -25,9 +25,11 @@ import java.util.stream.Collectors;
 
 import soa.L6.pet_feeder.Activities.MainActivity;
 import soa.L6.pet_feeder.Model.FeederRecorder;
+import soa.L6.pet_feeder.Model.FeederState;
 import soa.L6.pet_feeder.Model.Food;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.Utils.MQTTManager;
 import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.databinding.FragmentNotificationsBinding;
 
@@ -37,7 +39,7 @@ public class NotificationsFragment extends Fragment {
     private Button btn_delete;
     private MainActivity mainActivity;
     private AlertDialog dialog;
-
+    private MQTTManager mqttManager;
 
     private FragmentNotificationsBinding binding;
 
@@ -68,7 +70,7 @@ public class NotificationsFragment extends Fragment {
         });
 
         mainActivity = (MainActivity) requireActivity();
-
+        mqttManager = mainActivity.mqttManager;
         createFoodCards();
 
         return root;
@@ -106,7 +108,23 @@ public class NotificationsFragment extends Fragment {
 
     }
 
-    public void sinchronizeApp(){
+    public void sinchronizeApp()
+    {
+        FeederState state = mainActivity.feederState;
+        String message="";
+
+        if(!state.getFeederRecorder().getFoodList().isEmpty()){
+            for(Food f : state.getFeederRecorder().getFoodList())
+            {
+                message += f.getHour()+";"+f.getFood_amount()+",";
+            }
+
+            message = message.substring(0,message.length()-1);
+        }
+
+
+        mqttManager.publishMessage(PetFeederConstants.PUB_TOPIC_SINCRONIZAR, message);
+
         Toast.makeText(getContext(), "App sincronizada", Toast.LENGTH_SHORT).show();
     }
 
