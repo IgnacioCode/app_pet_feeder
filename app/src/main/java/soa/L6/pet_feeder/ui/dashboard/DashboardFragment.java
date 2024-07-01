@@ -1,14 +1,22 @@
 package soa.L6.pet_feeder.ui.dashboard;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -17,11 +25,14 @@ import soa.L6.pet_feeder.Activities.MainActivity;
 import soa.L6.pet_feeder.Model.Pet;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
+    private AlertDialog dialog;
+    MainActivity mainActivity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -31,7 +42,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity = (MainActivity) getActivity();
         mainActivity.dashboardFragment = this;
         LinearLayout containerLayout = root.findViewById(R.id.contenedor_linear);
 
@@ -87,6 +98,8 @@ public class DashboardFragment extends Fragment {
     private void addPetToContainer(ViewGroup container, Pet pet) {
         // Crear un contenedor para el Pet
         LinearLayout petContainer = new LinearLayout(getContext());
+        petContainer.setOnClickListener(v -> editPetDialog(pet));
+
         petContainer.setOrientation(LinearLayout.VERTICAL);
         petContainer.setPadding(PADDING_PANEL, PADDING_PANEL, PADDING_PANEL, PADDING_PANEL);
         petContainer.setBackgroundResource(R.drawable.panel_redondeado); // Asignar el drawable como fondo
@@ -143,4 +156,55 @@ public class DashboardFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    private void editPetDialog(Pet pet) {
+        LayoutInflater inflater = getLayoutInflater();
+        View popupView = inflater.inflate(R.layout.popup_pet_layout, null);
+
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomDialogTheme));
+        builder.setView(popupView)
+                .setTitle("Editar Mascota")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Aceptar"
+                        EditText input = popupView.findViewById(R.id.popup_input);
+                        String userInput = input.getText().toString();
+
+                        pet.setName(userInput);
+                        mainActivity.petRecorder.updatePet(pet);
+                        mainActivity.petRecorder.savePetsToFile(getContext());
+
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Cancelar"
+                        dialog.dismiss();
+                    }
+                });
+
+        // Mostrar el AlertDialog
+        dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                EditText input = popupView.findViewById(R.id.popup_input);
+                input.requestFocus();
+                input.setText(pet.getName());
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+
+                // cambio color texto botones
+                int textColor = android.graphics.Color.argb(255, 0, 0, 0);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(textColor);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(textColor);
+            }
+        });
+        dialog.show();
+
+    }
+
 }

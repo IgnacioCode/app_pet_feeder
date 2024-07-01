@@ -209,11 +209,4 @@ public class NotificationsFragment extends Fragment {
 
     }
 
-    public void acceptDialog(){
-        if(dialog != null){
-            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveButton.performClick();
-        }
-
-    }
 }
