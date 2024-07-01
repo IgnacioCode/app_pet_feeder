@@ -82,7 +82,7 @@ public class PetRecorder {
 
     public void updatePet(Pet petUpdate)
     {
-        petList.replaceAll(x -> x.compareTo(petUpdate) > 0 ? petUpdate : x);
+        petList.replaceAll(x -> x.compareTo(petUpdate) == 0 ? petUpdate : x);
     }
 
     public void clearPetList(){

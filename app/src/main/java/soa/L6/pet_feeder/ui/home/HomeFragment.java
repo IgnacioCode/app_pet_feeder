@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         input_time.setOnClickListener(v -> showTimePickerDialog());
         modify_schedule_btn.setOnClickListener(v -> saveNewAlimentacion());
         feed_now.setOnClickListener(v -> feedNowDialog());
-        //input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
+        input_time.setFocusable(false); // Esto hace que el EditText no sea enfocable
         input_time.setCursorVisible(false); // Oculta el cursor para que no parezca editable
         input_time.setKeyListener(null); // Desactiva el teclado virtual
 

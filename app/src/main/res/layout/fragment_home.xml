@@ -144,6 +144,7 @@
         android:layout_marginTop="26dp"
         android:backgroundTint="@color/purple_500"
         android:hint="Ingresar cantidad"
+        android:textColorHint="@color/black"
         android:inputType="number"
         android:textColor="?attr/editTextColor"/>
 
@@ -155,6 +156,7 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/purple_500"
         android:hint="Ingresar horario"
+        android:textColorHint="@color/black"
         android:inputType="none"
         android:textColor="?attr/editTextColor" />
 

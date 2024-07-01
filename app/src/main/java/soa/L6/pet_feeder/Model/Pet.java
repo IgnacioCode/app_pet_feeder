@@ -33,6 +33,7 @@ public class Pet implements Serializable, Comparable<Pet> {
         return "Pet{" +
                 "name='" + name + '\'' +
                 ", feed_times=" + feed_times +
+                ", rfid=" + rfid_key +
                 '}';
     }
 
@@ -44,7 +45,8 @@ public class Pet implements Serializable, Comparable<Pet> {
         return feed_times == pet.feed_times &&
                 Double.compare(pet.food_amount, food_amount) == 0 &&
                 Double.compare(pet.eat_average, eat_average) == 0 &&
-                Objects.equals(name, pet.name);
+                Objects.equals(name, pet.name) &&
+                Objects.equals(rfid_key, pet.rfid_key);
     }
 
     @Override

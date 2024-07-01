@@ -17,6 +17,7 @@ import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
 import soa.L6.pet_feeder.Utils.MQTTManager;
 import soa.L6.pet_feeder.Utils.PetFeederConstants;
+import soa.L6.pet_feeder.ui.dashboard.DashboardFragment;
 import soa.L6.pet_feeder.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private SensorEventListener sensorEventListener;
     public HomeFragment homeFragment;
+    public DashboardFragment dashboardFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
     public List<Pet> petList;
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                         Pet modify = petRecorder.getPetList().stream().filter(x -> x.compareTo(messageCat) == 0).findAny().get();
                         modify.record_meal(Double.parseDouble(messageWithSplit[1]));
                         petRecorder.updatePet(modify);
-                        callSetHomeDataInFragment();
+                        callAddPetInFragment(modify);
 
                     }
                     else //crear nueva mascota
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         //agregar mascota a lista
                         petRecorder.addPetToList(messageCat);
 
-                        callSetHomeDataInFragment();
+                        callAddPetInFragment(messageCat);
 
                     }
 
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         petRecorder = new PetRecorder(PetFeederConstants.FILE_NAME_PETS);
         petRecorder.loadPetsFromFile(this);
 
-        Pet newCat = new Pet("Pepe","CA");
+        /*Pet newCat = new Pet("Pepe","CA");
         newCat.record_meal(60.1);
         newCat.record_meal(12.36);
         newCat.record_meal(2.36);
@@ -176,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
         petRecorder.addPetToList(newCat);
 
         Log.d("TEST PET",petRecorder.getPetList().toString());
-        petRecorder.savePetsToFile(this);
+        petRecorder.savePetsToFile(this);*/
 
         FeederRecorder feederRecorder = feederState.getFeederRecorder();
-
+        /*
         Food newFood1 = new Food("12:00",50.00);
         Food newFood2 = new Food("14:00",50.00);
         Food newFood3 = new Food("15:00",50.00);
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         Food newFood7 = new Food("19:00",50.00);
         Food newFood8 = new Food("20:00",50.00);
         Food newFood9 = new Food("22:00",50.00);
-        /*
+
         feederRecorder.addFoodToList(newFood1);
         feederRecorder.addFoodToList(newFood2);
         feederRecorder.addFoodToList(newFood3);
@@ -235,6 +237,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d(MainActivity.class.getName(), "homeFragment no está listo, reintentando...");
             getSupportFragmentManager().executePendingTransactions();
             new android.os.Handler().postDelayed(this::callAcceptDialog, 1000); // Reintentar después de 1 segundo
+        }
+    }
+    private void callAddPetInFragment(Pet pet) {
+        if (dashboardFragment != null && dashboardFragment.isAdded()) {
+            dashboardFragment.addPetCard(pet);
         }
     }
 }
