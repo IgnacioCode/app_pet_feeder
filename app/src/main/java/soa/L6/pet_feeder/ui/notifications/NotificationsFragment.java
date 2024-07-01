@@ -1,16 +1,22 @@
 package soa.L6.pet_feeder.ui.notifications;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -22,6 +28,7 @@ import soa.L6.pet_feeder.Model.FeederRecorder;
 import soa.L6.pet_feeder.Model.Food;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
+import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
@@ -29,6 +36,8 @@ public class NotificationsFragment extends Fragment {
     private Button btn_sincro;
     private Button btn_delete;
     private MainActivity mainActivity;
+    private AlertDialog dialog;
+
 
     private FragmentNotificationsBinding binding;
 
@@ -77,7 +86,7 @@ public class NotificationsFragment extends Fragment {
         FeederRecorder feeder = mainActivity.feederState.getFeederRecorder();
 
         for (Food food : feeder.getFoodList().stream().sorted(Comparator.comparing(Food::getHour)).collect(Collectors.toList())) {
-            addPetToContainer(containerLayout, food);
+            addFoodToContainer(containerLayout, food);
         }
     }
 
@@ -107,9 +116,12 @@ public class NotificationsFragment extends Fragment {
     private static final int PADDING_BOTTOM = 0;
     private static final int PADDING_PANEL = 16;
 
-    private void addPetToContainer(ViewGroup container, Food food) {
+    private void addFoodToContainer(ViewGroup container, Food food) {
         // Crear un contenedor para el Pet
         LinearLayout foodContainer = new LinearLayout(getContext());
+
+        foodContainer.setOnClickListener(v -> DeleteFoodDialog(food));
+
         foodContainer.setOrientation(LinearLayout.VERTICAL);
         foodContainer.setPadding(PADDING_PANEL, PADDING_PANEL, PADDING_PANEL, PADDING_PANEL);
         foodContainer.setBackgroundResource(R.drawable.panel_redondeado); // Asignar el drawable como fondo
@@ -136,5 +148,54 @@ public class NotificationsFragment extends Fragment {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) foodContainer.getLayoutParams();
         params.setMargins(0, 0, 0, 16);
         foodContainer.setLayoutParams(params);
+    }
+
+    private void DeleteFoodDialog(Food food) {
+        LayoutInflater inflater = getLayoutInflater();
+        View popupView = inflater.inflate(R.layout.popup_notifications_layout, null);
+
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomDialogTheme));
+        builder.setView(popupView)
+                .setTitle("¿Eliminar horario " + food.getHour() + " ?")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Aceptar"
+                        //aca deberia estar el delete
+                        mainActivity.feederState.getFeederRecorder().deleteFood(food);
+                        mainActivity.feederState.getFeederRecorder().saveFoodToFile(getContext());
+
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Acción al hacer clic en "Cancelar"
+                        dialog.dismiss();
+                    }
+                });
+
+        // Mostrar el AlertDialog
+        dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                // cambio color texto botones
+                int textColor = android.graphics.Color.argb(255, 0, 0, 0);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(textColor);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(textColor);
+            }
+        });
+        dialog.show();
+
+    }
+
+    public void acceptDialog(){
+        if(dialog != null){
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.performClick();
+        }
+
     }
 }
