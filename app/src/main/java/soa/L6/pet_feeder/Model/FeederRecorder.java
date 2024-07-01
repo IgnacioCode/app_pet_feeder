@@ -116,8 +116,4 @@ public class FeederRecorder {
         foodList.replaceAll(x -> x.compareTo(foodUpdate) > 0 ? foodUpdate : x);
     }
 
-    public Food getMinHour()
-    {
-        return foodList.stream().min(Comparator.comparing(Food::getHour)).get();
-    }
 }

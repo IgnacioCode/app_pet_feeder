@@ -28,6 +28,7 @@ public class NotificationsFragment extends Fragment {
 
     private Button btn_sincro;
     private Button btn_delete;
+    private MainActivity mainActivity;
 
     private FragmentNotificationsBinding binding;
 
@@ -57,14 +58,9 @@ public class NotificationsFragment extends Fragment {
 
         });
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        LinearLayout containerLayout = root.findViewById(R.id.contenedor_linear);
+        mainActivity = (MainActivity) requireActivity();
 
-        FeederRecorder feeder = mainActivity.feederRecorder;
-
-        for (Food food : feeder.getFoodList().stream().sorted(Comparator.comparing(Food::getHour)).collect(Collectors.toList())) {
-            addPetToContainer(containerLayout, food);
-        }
+        createFoodCards();
 
         return root;
     }
@@ -75,17 +71,27 @@ public class NotificationsFragment extends Fragment {
         binding = null;
     }
 
+    public void createFoodCards()
+    {
+        LinearLayout containerLayout = binding.getRoot().findViewById(R.id.contenedor_linear);
+        FeederRecorder feeder = mainActivity.feederState.getFeederRecorder();
+
+        for (Food food : feeder.getFoodList().stream().sorted(Comparator.comparing(Food::getHour)).collect(Collectors.toList())) {
+            addPetToContainer(containerLayout, food);
+        }
+    }
+
     public void deleteAppData(){
         MainActivity mainActivity = (MainActivity) getActivity();
         LinearLayout containerLayout = binding.getRoot().findViewById(R.id.contenedor_linear);
 
         PetRecorder petRecorder = mainActivity.petRecorder;
-        FeederRecorder feederRecorder = mainActivity.feederRecorder;
+        FeederRecorder feederRecorder = mainActivity.feederState.getFeederRecorder();
 
         petRecorder.clearPetList();
-        feederRecorder.clearFoodList();
-
         petRecorder.savePetsToFile(getContext());
+
+        mainActivity.feederState.clearFoodList();
 
         Toast.makeText(getContext(), "Datos Eliminados", Toast.LENGTH_SHORT).show();
 

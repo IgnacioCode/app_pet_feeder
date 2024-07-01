@@ -1,11 +1,19 @@
 package soa.L6.pet_feeder.Model;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import soa.L6.pet_feeder.Utils.PetFeederConstants;
 
@@ -16,12 +24,14 @@ public class FeederState {
     private boolean refillNeed;
     private boolean clearNeed;
     private EstadoEmbebido estado;
-    private List<Alimentacion> alimentaciones = new ArrayList<>();
+    //private List<Food> alimentaciones = new ArrayList<>();
     private FeederRecorder feederRecorder = new FeederRecorder(PetFeederConstants.FILE_NAME_FOODS);
+    private Context context;
 
     public FeederState(Context context){
-        feederRecorder.loadFoodsFromFile(context);
-        Food food = feederRecorder.getMinHour();
+        this.context = context;
+        feederRecorder.loadFoodsFromFile(this.context);
+        Food food = getNextFood();
         nextMealTime = food.getHour();
         foodAmount = food.getFood_amount();
         refillNeed = false;
@@ -41,17 +51,32 @@ public class FeederState {
                 ", refillNeed=" + refillNeed +
                 ", clearNeed=" + clearNeed +
                 ", estado=" + estado +
-                ", alimentaciones=" + alimentaciones +
+                ", alimentaciones=" + feederRecorder.getFoodList() +
                 '}';
     }
+    public Food getNextFood() {
+        Food res = new Food("",0.0);
+
+        if(!feederRecorder.getFoodList().isEmpty())
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            String actual = sdf.format(new Date());
+
+            Food foodActual = new Food(actual,0.0);
+            List<Food> foodList = feederRecorder.getFoodList().stream().filter(x -> x.compareTo(foodActual) > 0 ).sorted(Comparator.comparing(Food::getHour)).collect(Collectors.toList());
+            res = foodList.isEmpty() ? feederRecorder.getFoodList().get(0) : foodList.get(0);
+        }
+
+        return res;
+    }
     public String getNextMealTime() {
-        return nextMealTime;
+        return getNextFood().getHour();
     }
     public void setNextMealTime(String nextMealTime) {
         this.nextMealTime = nextMealTime;
     }
     public double getFoodAmount() {
-        return foodAmount;
+        return getNextFood().getFood_amount();
     }
     public void setFoodAmount(double foodAmount) {
         this.foodAmount = foodAmount;
@@ -69,7 +94,8 @@ public class FeederState {
         this.clearNeed = clearNeed;
     }
     public void AddAlimentacion(String horario, double cantComida) {
-        alimentaciones.add(new Alimentacion(horario,cantComida));
+        feederRecorder.addFoodToList(new Food(horario,cantComida));
+        feederRecorder.saveFoodToFile(context);
     }
     public void UpdateEstado(String message) {
         estado = EstadoEmbebido.fromString(message);
@@ -82,5 +108,15 @@ public class FeederState {
             clearNeed = false;
         }
         Log.d(FeederState.class.getName(), "Estado Updateado " + estado);
+    }
+
+    public void clearFoodList()
+    {
+        feederRecorder.clearFoodList();
+        feederRecorder.saveFoodToFile(context);
+    }
+    public FeederRecorder getFeederRecorder()
+    {
+        return feederRecorder;
     }
 }

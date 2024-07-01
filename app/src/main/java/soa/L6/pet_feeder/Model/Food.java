@@ -32,6 +32,15 @@ public class Food implements Serializable, Comparable<Food> {
                 Double.compare(food.food_amount, food_amount) == 0;
     }
 
+    @Override
+    public int compareTo(Food food) {
+        // Convertimos los horarios a LocalTime para poder compararlos
+        java.time.LocalTime thisTime = java.time.LocalTime.parse(this.hour);
+        java.time.LocalTime otraTime = java.time.LocalTime.parse(food.getHour());
+
+        return thisTime.compareTo(otraTime);
+    }
+
 
     public String getHour() {
         return hour;
@@ -49,12 +58,4 @@ public class Food implements Serializable, Comparable<Food> {
         this.food_amount = food_amount;
     }
 
-    @Override
-    public int compareTo(Food o) {
-        if(this.hour.compareTo(o.hour) == 0){
-            return 0;
-        }
-
-        return 1;
-    }
 }

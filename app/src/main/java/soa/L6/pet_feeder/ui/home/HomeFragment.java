@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import soa.L6.pet_feeder.Model.FeederRecorder;
 import soa.L6.pet_feeder.Model.FeederState;
 import soa.L6.pet_feeder.Model.Food;
 import soa.L6.pet_feeder.Model.Pet;
@@ -46,6 +47,7 @@ public class HomeFragment extends Fragment {
     private Button feed_now;
     private EditText input_time;
     private EditText input_amount;
+    private MainActivity mainActivity;
 
     private MQTTManager mqttManager;
 
@@ -53,7 +55,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
-        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity = (MainActivity) requireActivity();
         mqttManager = mainActivity.getMQTTManager();
         mainActivity.homeFragment = this;
 
@@ -173,24 +175,19 @@ public class HomeFragment extends Fragment {
             assert mainActivity != null;
 
             Food newFood = new Food(time,Double.parseDouble(amount));
-
-            if(mainActivity.feederRecorder.exists(newFood))
+            FeederRecorder feederRecorder = mainActivity.feederState.getFeederRecorder();
+            if(feederRecorder.exists(newFood))
             {
-                Food modify = mainActivity.feederRecorder.getFoodList().stream().filter(x -> x.getHour().compareTo(newFood.getHour()) == 0).findAny().get();
+                Food modify = feederRecorder.getFoodList().stream().filter(x -> x.getHour().compareTo(newFood.getHour()) == 0).findAny().get();
                 modify.setFood_amount(newFood.getFood_amount());
-                mainActivity.feederRecorder.updateFood(modify);
+                feederRecorder.updateFood(modify);
             }
             else
             {
-                mainActivity.feederRecorder.addFoodToList(newFood);
+                feederRecorder.addFoodToList(newFood);
             }
 
-            mainActivity.feederRecorder.saveFoodToFile(mainActivity);
-            Food nextTime = mainActivity.feederRecorder.getMinHour();
-
-            mainActivity.feederState.setNextMealTime(nextTime.getHour());
-            mainActivity.feederState.setFoodAmount(nextTime.getFood_amount());
-
+            feederRecorder.saveFoodToFile(mainActivity);
 
             setHomeData(mainActivity.feederState);
             mqttManager.publishMessage(PetFeederConstants.PUB_TOPIC_ALIMENTACION, message);
@@ -201,6 +198,12 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setHomeData(mainActivity.feederState);
     }
 
     public void setHomeData(FeederState state){

@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     public HomeFragment homeFragment;
     public MQTTManager mqttManager;
     public PetRecorder petRecorder;
-    public FeederRecorder feederRecorder;
     public List<Pet> petList;
     public FeederState feederState;
 
@@ -179,17 +178,28 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TEST PET",petRecorder.getPetList().toString());
         petRecorder.savePetsToFile(this);
 
-        feederRecorder = new FeederRecorder(PetFeederConstants.FILE_NAME_FOODS);
-        feederRecorder.loadFoodsFromFile(this);
+        FeederRecorder feederRecorder = feederState.getFeederRecorder();
 
         Food newFood1 = new Food("12:00",50.00);
-        Food newFood2 = new Food("15:00",50.00);
-        Food newFood3 = new Food("19:00",50.00);
-
+        Food newFood2 = new Food("14:00",50.00);
+        Food newFood3 = new Food("15:00",50.00);
+        Food newFood4 = new Food("16:00",50.00);
+        Food newFood5 = new Food("17:00",50.00);
+        Food newFood6 = new Food("18:00",50.00);
+        Food newFood7 = new Food("19:00",50.00);
+        Food newFood8 = new Food("20:00",50.00);
+        Food newFood9 = new Food("22:00",50.00);
+        /*
         feederRecorder.addFoodToList(newFood1);
         feederRecorder.addFoodToList(newFood2);
         feederRecorder.addFoodToList(newFood3);
-
+        feederRecorder.addFoodToList(newFood4);
+        feederRecorder.addFoodToList(newFood5);
+        feederRecorder.addFoodToList(newFood6);
+        feederRecorder.addFoodToList(newFood7);
+        feederRecorder.addFoodToList(newFood8);
+        feederRecorder.addFoodToList(newFood9);
+        */
         Log.d("TEST FOOD",feederRecorder.getFoodList().toString());
 
         //feederRecorder.saveFoodToFile(this);
