@@ -167,6 +167,25 @@ public class NotificationsFragment extends Fragment {
         params.setMargins(0, 0, 0, 16);
         foodContainer.setLayoutParams(params);
     }
+    private LinearLayout findFoodContainer(ViewGroup container, Food food) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                LinearLayout foodContainer = (LinearLayout) child;
+                TextView nameTextView = (TextView) foodContainer.getChildAt(0);
+                if (nameTextView.getText().toString().contains(food.getHour())) {
+                    return foodContainer;
+                }
+            }
+        }
+        return null; // Si no se encuentra el contenedor
+    }
+    private void removeFoodContainer(ViewGroup container, Food food) {
+        LinearLayout foodContainer = findFoodContainer(container, food);
+        if (foodContainer != null) {
+            container.removeView(foodContainer);
+        }
+    }
 
     private void DeleteFoodDialog(Food food) {
         LayoutInflater inflater = getLayoutInflater();
@@ -183,6 +202,8 @@ public class NotificationsFragment extends Fragment {
                         //aca deberia estar el delete
                         mainActivity.feederState.getFeederRecorder().deleteFood(food);
                         mainActivity.feederState.getFeederRecorder().saveFoodToFile(getContext());
+                        LinearLayout containerLayout = binding.getRoot().findViewById(R.id.contenedor_linear);
+                        removeFoodContainer(containerLayout, food);
 
                     }
                 })

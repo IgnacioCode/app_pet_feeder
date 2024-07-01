@@ -8,11 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +23,6 @@ import soa.L6.pet_feeder.Activities.MainActivity;
 import soa.L6.pet_feeder.Model.Pet;
 import soa.L6.pet_feeder.Model.PetRecorder;
 import soa.L6.pet_feeder.R;
-import soa.L6.pet_feeder.Utils.PetFeederConstants;
 import soa.L6.pet_feeder.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
@@ -59,10 +56,9 @@ public class DashboardFragment extends Fragment {
     private static final int PADDING_RIGHT = 0;
     private static final int PADDING_BOTTOM = 0;
     private static final int PADDING_PANEL = 16;
-    public Boolean petCardExists(ViewGroup containerLayout,Pet pet)
+    public LinearLayout findPetCard(ViewGroup containerLayout, Pet pet)
     {
         // Verificar si ya existe una tarjeta con el mismo RFID
-        boolean petCardExists = false;
         for (int i = 0; i < containerLayout.getChildCount(); i++) {
             View child = containerLayout.getChildAt(i);
             if (child instanceof LinearLayout) {
@@ -71,20 +67,21 @@ public class DashboardFragment extends Fragment {
 
                 if (rfidTextView.getText().toString().equals(pet.getRfid_key())) {
                     // Actualizar la tarjeta existente
-                    updatePetCard(petContainer, pet);
-                    petCardExists = true;
-                    break;
+                    return petContainer;
                 }
             }
         }
-        return petCardExists;
+        return null;
     }
     public void addPetCard(Pet pet)
     {
         LinearLayout containerLayout = binding.getRoot().findViewById(R.id.contenedor_linear);
-        if(!petCardExists(containerLayout,pet))
+        LinearLayout petContainer = findPetCard(containerLayout,pet);
+        if(petContainer == null)
         {
             addPetToContainer(containerLayout,pet);
+        } else {
+            updatePetCard(petContainer,pet);
         }
     }
     private void updatePetCard(LinearLayout petContainer, Pet pet) {
@@ -175,6 +172,11 @@ public class DashboardFragment extends Fragment {
                         pet.setName(userInput);
                         mainActivity.petRecorder.updatePet(pet);
                         mainActivity.petRecorder.savePetsToFile(getContext());
+                        LinearLayout containerLayout = binding.getRoot().findViewById(R.id.contenedor_linear);
+                        LinearLayout petLayout = findPetCard(containerLayout,pet);
+                        if(petLayout != null) {
+                            updatePetCard(petLayout,pet);
+                        }
 
                     }
                 })

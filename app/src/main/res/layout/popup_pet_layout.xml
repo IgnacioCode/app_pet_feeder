@@ -10,6 +10,7 @@
         android:id="@+id/popup_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:hint="Ingresar nombre mascota"
         android:inputType="text"
         android:textColorHint="@color/black" />
